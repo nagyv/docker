@@ -8,6 +8,7 @@ set -e
 : ${PORT:=${DB_PORT_5432_TCP_PORT:=5432}}
 : ${USER:=${DB_ENV_POSTGRES_USER:=${POSTGRES_USER:='odoo'}}}
 : ${PASSWORD:=${DB_ENV_POSTGRES_PASSWORD:=${POSTGRES_PASSWORD:='odoo'}}}
+: ${SKIP_PSQL_CHECK:=false}
 
 DB_ARGS=()
 function check_config() {
@@ -30,12 +31,12 @@ case "$1" in
         if [[ "$1" == "scaffold" ]] ; then
             exec odoo "$@"
         else
-            wait-for-psql.py ${DB_ARGS[@]} --timeout=30
+            wait-for-psql.py ${DB_ARGS[@]} --timeout=30 --skip=$SKIP_PSQL_CHECK
             exec odoo "$@" "${DB_ARGS[@]}"
         fi
         ;;
     -*)
-        wait-for-psql.py ${DB_ARGS[@]} --timeout=30
+        wait-for-psql.py ${DB_ARGS[@]} --timeout=30 --skip=$SKIP_PSQL_CHECK
         exec odoo "$@" "${DB_ARGS[@]}"
         ;;
     *)

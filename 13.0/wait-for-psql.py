@@ -12,8 +12,13 @@ if __name__ == '__main__':
     arg_parser.add_argument('--db_user', required=True)
     arg_parser.add_argument('--db_password', required=True)
     arg_parser.add_argument('--timeout', type=int, default=5)
+    arg_parser.add_argument('--skip', type=bool, default=False)
 
     args = arg_parser.parse_args()
+
+    if args.skip:
+        print("Skipping postgres connection check")
+        sys.exit(0)
 
     start_time = time.time()
     while (time.time() - start_time) < args.timeout:
